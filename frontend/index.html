@@ -34,26 +34,62 @@
       margin: 0 0 10px;
     }
 
-    input[type="file"],
-    input[type="text"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      background-color: #2a2a2a;
+      border: 2px solid #333;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: #aaa;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 4px #1976d2;
+    }
+
     input[type="range"] {
       width: 100%;
       margin: 5px 0 10px;
     }
 
-    button {
+    button,
+    .file-btn {
       background-color: #1976d2;
       color: white;
       border: none;
-      padding: 10px;
-      margin: 5px 0;
+      padding: 12px;
+      margin: 8px 0;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      text-align: center;
     }
 
-    button:hover {
+    button:hover,
+    .file-btn:hover {
       background-color: #1565c0;
+    }
+
+    button:active,
+    .file-btn:active {
+      transform: scale(0.98);
+      background-color: #0d47a1;
+    }
+
+    .file-btn input[type="file"] {
+      display: none;
     }
 
     .slider-label {
@@ -72,32 +108,33 @@
       margin-top: 5px;
       color: #aaa;
     }
+
     input[type="range"] {
-    -webkit-appearance: none;
-    height: 4px;
-    background: #333;
-    border-radius: 2px;
-    outline: none;
+      -webkit-appearance: none;
+      height: 4px;
+      background: #333;
+      border-radius: 2px;
+      outline: none;
     }
 
     input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #1976d2;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 2px black;
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 2px black;
     }
 
     input[type="range"]::-moz-range-thumb {
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #1976d2;
-    cursor: pointer;
-    border: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+      border: none;
     }
   </style>
 </head>
@@ -107,8 +144,15 @@
 
     <input type="text" id="text" placeholder="Type text..." />
 
-    <input type="file" id="file" accept=".txt" />
-    <input type="file" id="audio" accept=".wav" />
+    <label class="file-btn">
+      TEXT FILE TO SPEAK (.txt)
+      <input type="file" id="file" accept=".txt" />
+    </label>
+
+    <label class="file-btn">
+      SPEAKER VOICE CLIP (.wav)
+      <input type="file" id="audio" accept=".wav" />
+    </label>
 
     <div class="slider-label">
       <label>Batch Size</label>
@@ -128,8 +172,8 @@
     </div>
     <input type="range" id="cfg" min="0" max="1" step="0.01" value="0.5" />
 
-    <button onclick="generate()">Generate</button>
-    <button onclick="stop()">Stop</button>
+    <button onclick="generate()">GENERATE</button>
+    <button onclick="stop()">STOP</button>
 
     <audio id="player" controls></audio>
     <div class="status" id="status"></div>

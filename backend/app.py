@@ -1,6 +1,7 @@
 from flask import Flask, request, send_file, jsonify, send_from_directory
 from voicebox_core import VoiceBox
 import os
+import threading
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
 voicebox = VoiceBox()
@@ -47,5 +48,14 @@ def stop():
     return "Stopped", 200
 
 if __name__ == "__main__":
+    import webview
+
     os.makedirs("output", exist_ok=True)
-    app.run(host="0.0.0.0", port=5000)
+
+    def run_flask():
+        app.run(host="127.0.0.1", port=5000, threaded=True)
+
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+
+    webview.create_window("VoiceBox", "http://127.0.0.1:5000")
