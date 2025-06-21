@@ -34,31 +34,56 @@
       margin: 0 0 10px;
     }
 
+    /* Styled text input */
     input[type="text"] {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px 16px;
+      margin: 5px 0 15px;
       background-color: #2a2a2a;
-      border: 2px solid #333;
+      border: 2px solid #1976d2;
       border-radius: 8px;
       color: white;
       font-size: 16px;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input[type="text"]::placeholder {
-      color: #aaa;
-    }
-
-    input[type="text"]:focus {
+      font-weight: 500;
       outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 4px #1976d2;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+      user-select: text;
+    }
+    input[type="text"]:focus {
+      border-color: #1565c0;
+      box-shadow: 0 0 8px #1976d2;
+      background-color: #333333;
     }
 
     input[type="range"] {
       width: 100%;
       margin: 5px 0 10px;
+      -webkit-appearance: none;
+      height: 4px;
+      background: #333;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 2px black;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+      border: none;
     }
 
     button,
@@ -98,43 +123,67 @@
       font-size: 14px;
     }
 
-    audio {
-      width: 100%;
-      margin-top: 10px;
-    }
-
     .status {
       font-size: 14px;
       margin-top: 5px;
       color: #aaa;
     }
 
-    input[type="range"] {
+    /* Custom audio player styles */
+    audio {
+      display: none;
+    }
+
+    .custom-audio {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #2a2a2a;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .custom-audio button {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    .custom-audio button:hover {
+      background-color: #1565c0;
+    }
+
+    .custom-audio input[type="range"] {
+      flex-grow: 1;
       -webkit-appearance: none;
       height: 4px;
-      background: #333;
+      background: #444;
       border-radius: 2px;
       outline: none;
     }
 
-    input[type="range"]::-webkit-slider-thumb {
+    .custom-audio input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 16px;
-      width: 16px;
+      height: 14px;
+      width: 14px;
       border-radius: 50%;
       background: #1976d2;
       cursor: pointer;
-      border: none;
-      box-shadow: 0 0 2px black;
     }
 
-    input[type="range"]::-moz-range-thumb {
-      height: 16px;
-      width: 16px;
+    .custom-audio input[type="range"]::-moz-range-thumb {
+      height: 14px;
+      width: 14px;
       border-radius: 50%;
       background: #1976d2;
       cursor: pointer;
-      border: none;
     }
   </style>
 </head>
@@ -175,7 +224,12 @@
     <button onclick="generate()">GENERATE</button>
     <button onclick="stop()">STOP</button>
 
-    <audio id="player" controls></audio>
+    <audio id="player" preload="auto"></audio>
+    <div class="custom-audio">
+      <button id="playBtn">▶</button>
+      <input type="range" id="seekBar" value="0" min="0" step="1" />
+    </div>
+
     <div class="status" id="status"></div>
   </div>
 
@@ -216,6 +270,9 @@
 
       $("status").textContent = "Generating...";
       $("player").src = "";
+      $("playBtn").textContent = "▶";
+      $("seekBar").value = 0;
+      $("seekBar").max = 0;
 
       try {
         const res = await fetch("/generate", { method: "POST", body: form });
@@ -232,6 +289,36 @@
       await fetch("/stop", { method: "POST" });
       $("status").textContent = "Stopped.";
     }
+
+    const player = $("player");
+    const playBtn = $("playBtn");
+    const seekBar = $("seekBar");
+
+    playBtn.onclick = () => {
+      if (player.paused) {
+        player.play();
+        playBtn.textContent = "⏸";
+      } else {
+        player.pause();
+        playBtn.textContent = "▶";
+      }
+    };
+
+    player.onloadedmetadata = () => {
+      seekBar.max = Math.floor(player.duration);
+    };
+
+    player.ontimeupdate = () => {
+      seekBar.value = Math.floor(player.currentTime);
+    };
+
+    seekBar.oninput = () => {
+      player.currentTime = seekBar.value;
+    };
+
+    player.onended = () => {
+      playBtn.textContent = "▶";
+    };
   </script>
 </body>
 </html>
