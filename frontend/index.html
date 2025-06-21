@@ -27,6 +27,18 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-sizing: border-box;
+      max-width: 90vw;
+      max-height: 95vh;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90vw;
+        height: auto;
+        aspect-ratio: 9 / 16;
+        padding: 15px;
+      }
     }
 
     h2 {
@@ -34,36 +46,35 @@
       margin: 0 0 10px;
     }
 
-    /* Styled text input */
     input[type="text"] {
       width: 100%;
-      padding: 12px 16px;
-      margin: 5px 0 15px;
-      background-color: #2a2a2a;
-      border: 2px solid #1976d2;
-      border-radius: 8px;
-      color: white;
+      margin: 5px 0 10px;
+      padding: 12px 15px;
       font-size: 16px;
-      font-weight: 500;
-      outline: none;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 8px;
+      border: none;
+      background: #333;
+      color: white;
+      box-shadow: inset 0 0 8px #000000aa;
       box-sizing: border-box;
-      user-select: text;
+      transition: background-color 0.2s ease;
     }
+
     input[type="text"]:focus {
-      border-color: #1565c0;
+      outline: none;
+      background-color: #444;
       box-shadow: 0 0 8px #1976d2;
-      background-color: #333333;
     }
 
     input[type="range"] {
       width: 100%;
-      margin: 5px 0 10px;
       -webkit-appearance: none;
-      height: 4px;
+      height: 6px;
       background: #333;
-      border-radius: 2px;
+      border-radius: 3px;
       outline: none;
+      cursor: pointer;
+      margin: 5px 0 15px;
     }
 
     input[type="range"]::-webkit-slider-thumb {
@@ -75,6 +86,7 @@
       cursor: pointer;
       border: none;
       box-shadow: 0 0 2px black;
+      margin-top: -5px;
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -100,6 +112,10 @@
       transition: background-color 0.2s ease, transform 0.1s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       text-align: center;
+      user-select: none;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     button:hover,
@@ -121,69 +137,86 @@
       display: flex;
       justify-content: space-between;
       font-size: 14px;
+      margin-top: 10px;
     }
 
     .status {
       font-size: 14px;
       margin-top: 5px;
       color: #aaa;
+      min-height: 18px;
     }
 
-    /* Custom audio player styles */
-    audio {
-      display: none;
-    }
-
-    .custom-audio {
+    /* Custom Audio Player */
+    .audio-player {
       display: flex;
       align-items: center;
       gap: 10px;
-      background-color: #2a2a2a;
-      padding: 10px 12px;
-      border-radius: 8px;
       margin-top: 10px;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+      width: 100%;
     }
 
-    .custom-audio button {
+    .audio-button {
       background-color: #1976d2;
-      color: white;
       border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      color: white;
+      font-size: 20px;
+      padding: 8px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       transition: background-color 0.2s ease;
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
     }
 
-    .custom-audio button:hover {
+    .audio-button:hover {
       background-color: #1565c0;
     }
 
-    .custom-audio input[type="range"] {
+    #audioProgress {
       flex-grow: 1;
       -webkit-appearance: none;
-      height: 4px;
-      background: #444;
-      border-radius: 2px;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
       outline: none;
+      cursor: pointer;
     }
 
-    .custom-audio input[type="range"]::-webkit-slider-thumb {
+    #audioProgress::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 14px;
-      width: 14px;
+      height: 16px;
+      width: 16px;
       border-radius: 50%;
       background: #1976d2;
       cursor: pointer;
+      border: none;
+      margin-top: -5px;
+      box-shadow: 0 0 2px black;
     }
 
-    .custom-audio input[type="range"]::-moz-range-thumb {
-      height: 14px;
-      width: 14px;
+    #audioProgress::-moz-range-thumb {
+      height: 16px;
+      width: 16px;
       border-radius: 50%;
       background: #1976d2;
       cursor: pointer;
+      border: none;
+    }
+
+    .audio-time {
+      min-width: 50px;
+      font-family: monospace;
+      font-size: 14px;
+      color: #aaa;
+      text-align: right;
+      user-select: none;
     }
   </style>
 </head>
@@ -193,30 +226,30 @@
 
     <input type="text" id="text" placeholder="Type text..." />
 
-    <label class="file-btn">
+    <label class="file-btn" tabindex="0">
       TEXT FILE TO SPEAK (.txt)
       <input type="file" id="file" accept=".txt" />
     </label>
 
-    <label class="file-btn">
+    <label class="file-btn" tabindex="0">
       SPEAKER VOICE CLIP (.wav)
       <input type="file" id="audio" accept=".wav" />
     </label>
 
     <div class="slider-label">
-      <label>Batch Size</label>
+      <label for="batch">Batch Size</label>
       <span id="batchVal">30</span>
     </div>
     <input type="range" id="batch" min="1" max="300" value="30" />
 
     <div class="slider-label">
-      <label>Emotion</label>
+      <label for="exaggeration">Emotion</label>
       <span id="exagVal">0.5</span>
     </div>
     <input type="range" id="exaggeration" min="0" max="1" step="0.01" value="0.5" />
 
     <div class="slider-label">
-      <label>Pacing</label>
+      <label for="cfg">Pacing</label>
       <span id="cfgVal">0.5</span>
     </div>
     <input type="range" id="cfg" min="0" max="1" step="0.01" value="0.5" />
@@ -224,10 +257,10 @@
     <button onclick="generate()">GENERATE</button>
     <button onclick="stop()">STOP</button>
 
-    <audio id="player" preload="auto"></audio>
-    <div class="custom-audio">
-      <button id="playBtn">▶</button>
-      <input type="range" id="seekBar" value="0" min="0" step="1" />
+    <div class="audio-player">
+      <button id="audioPlayBtn" class="audio-button" aria-label="Play/Pause">▶️</button>
+      <input type="range" id="audioProgress" min="0" max="100" value="0" step="1" />
+      <div class="audio-time" id="audioTime">00:00</div>
     </div>
 
     <div class="status" id="status"></div>
@@ -246,39 +279,139 @@
     syncValue("exaggeration", "exagVal");
     syncValue("cfg", "cfgVal");
 
+    let audioBlob = null;
+    let audioContext, audioSource, audioBuffer;
+    let isPlaying = false;
+    let startTime = 0;
+    let pausedAt = 0;
+    let animationFrameId;
+
+    const playBtn = $("audioPlayBtn");
+    const progress = $("audioProgress");
+    const timeDisplay = $("audioTime");
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function updateProgress() {
+      if (!audioBuffer) return;
+
+      const elapsed = audioContext.currentTime - startTime + pausedAt;
+      if (elapsed >= audioBuffer.duration) {
+        pauseAudio();
+        progress.value = 100;
+        timeDisplay.textContent = formatTime(audioBuffer.duration);
+        return;
+      }
+
+      progress.value = (elapsed / audioBuffer.duration) * 100;
+      timeDisplay.textContent = formatTime(elapsed);
+      animationFrameId = requestAnimationFrame(updateProgress);
+    }
+
+    function playAudio() {
+      if (!audioBuffer) return;
+
+      audioSource = audioContext.createBufferSource();
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(audioContext.destination);
+
+      startTime = audioContext.currentTime;
+      audioSource.start(0, pausedAt);
+      isPlaying = true;
+      playBtn.textContent = "⏸️";
+
+      audioSource.onended = () => {
+        pauseAudio();
+        progress.value = 100;
+        timeDisplay.textContent = formatTime(audioBuffer.duration);
+      };
+
+      updateProgress();
+    }
+
+    function pauseAudio() {
+      if (audioSource) {
+        audioSource.stop();
+        audioSource.disconnect();
+        audioSource = null;
+      }
+      pausedAt += audioContext.currentTime - startTime;
+      isPlaying = false;
+      playBtn.textContent = "▶️";
+      cancelAnimationFrame(animationFrameId);
+    }
+
+    playBtn.onclick = () => {
+      if (!audioBuffer) return;
+      if (isPlaying) {
+        pauseAudio();
+      } else {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        playAudio();
+      }
+    };
+
+    progress.oninput = () => {
+      if (!audioBuffer) return;
+      const seekTime = (progress.value / 100) * audioBuffer.duration;
+      pausedAt = seekTime;
+      timeDisplay.textContent = formatTime(seekTime);
+      if (isPlaying) {
+        pauseAudio();
+        playAudio();
+      }
+    };
+
     async function generate() {
       const form = new FormData();
-      const text = $("text").value;
+      const text = $("text").value.trim();
       const file = $("file").files[0];
-      const audio = $("audio").files[0];
+      const audioFile = $("audio").files[0];
 
       if (!text && !file) {
         $("status").textContent = "Error: Provide text or a text file.";
         return;
       }
-      if (!audio) {
+      if (!audioFile) {
         $("status").textContent = "Error: Provide a reference audio.";
         return;
       }
 
       form.append("text", text);
       if (file) form.append("file", file);
-      form.append("audio", audio);
+      form.append("audio", audioFile);
       form.append("batch_size", $("batch").value);
       form.append("exaggeration", $("exaggeration").value);
       form.append("cfg_weight", $("cfg").value);
 
       $("status").textContent = "Generating...";
-      $("player").src = "";
-      $("playBtn").textContent = "▶";
-      $("seekBar").value = 0;
-      $("seekBar").max = 0;
+      pausedAt = 0;
+      progress.value = 0;
+      timeDisplay.textContent = "00:00";
+      audioBlob = null;
+      audioBuffer = null;
+      if (audioContext) audioContext.close();
+      audioContext = null;
+      isPlaying = false;
+      playBtn.textContent = "▶️";
 
       try {
         const res = await fetch("/generate", { method: "POST", body: form });
         if (!res.ok) throw new Error(await res.text());
-        const blob = await res.blob();
-        $("player").src = URL.createObjectURL(blob);
+        audioBlob = await res.blob();
+
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        const arrayBuffer = await audioBlob.arrayBuffer();
+        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        progress.value = 0;
+        timeDisplay.textContent = "00:00";
+
         $("status").textContent = "Generation complete.";
       } catch (err) {
         $("status").textContent = "Error: " + err.message;
@@ -288,37 +421,10 @@
     async function stop() {
       await fetch("/stop", { method: "POST" });
       $("status").textContent = "Stopped.";
-    }
-
-    const player = $("player");
-    const playBtn = $("playBtn");
-    const seekBar = $("seekBar");
-
-    playBtn.onclick = () => {
-      if (player.paused) {
-        player.play();
-        playBtn.textContent = "⏸";
-      } else {
-        player.pause();
-        playBtn.textContent = "▶";
+      if (isPlaying) {
+        pauseAudio();
       }
-    };
-
-    player.onloadedmetadata = () => {
-      seekBar.max = Math.floor(player.duration);
-    };
-
-    player.ontimeupdate = () => {
-      seekBar.value = Math.floor(player.currentTime);
-    };
-
-    seekBar.oninput = () => {
-      player.currentTime = seekBar.value;
-    };
-
-    player.onended = () => {
-      playBtn.textContent = "▶";
-    };
+    }
   </script>
 </body>
 </html>
