@@ -1,9 +1,13 @@
 from flask import Flask, request, send_file, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
 from voicebox_core import VoiceBox
 import os
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
 voicebox = VoiceBox()
+
+# Ensure output directory exists
+os.makedirs("output", exist_ok=True)
 
 @app.route("/")
 def index():
@@ -20,32 +24,43 @@ def generate():
         cfg_weight = float(request.form.get("cfg_weight", 0.5))
 
         if not audio_file:
-            return "Error: Provide a reference audio.", 400
+            return jsonify({"error": "Provide a reference audio."}), 400
 
-        audio_path = os.path.join("output", "audio_prompt.wav")
+        # Secure and save the audio prompt
+        audio_filename = secure_filename(audio_file.filename or "audio_prompt.wav")
+        audio_path = os.path.join("output", audio_filename)
         audio_file.save(audio_path)
 
+        # Process text file if provided
         if txt_file:
-            text_path = os.path.join("output", "input.txt")
+            text_filename = secure_filename(txt_file.filename or "input.txt")
+            text_path = os.path.join("output", text_filename)
             txt_file.save(text_path)
             result_path = voicebox.process_text_file(text_path, audio_path, batch_size, exaggeration, cfg_weight)
         elif text:
             result_path = voicebox.generate_audio(text, audio_path, exaggeration, cfg_weight)
         else:
-            return "Error: Provide either text or a text file.", 400
+            return jsonify({"error": "Provide either text or a text file."}), 400
 
-        if os.path.exists(result_path):
-            return send_file(result_path, mimetype="audio/wav")
-        return "Error: No audio generated.", 500
+        # Handle different return types
+        if isinstance(result_path, str) and os.path.exists(result_path):
+            return send_file(result_path, mimetype="audio/wav", as_attachment=True)
+        elif isinstance(result_path, str) and "stopped" in result_path.lower():
+            return jsonify({"message": result_path}), 200
+
+        return jsonify({"error": "No audio generated."}), 500
 
     except Exception as e:
-        return str(e), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/stop", methods=["POST"])
 def stop():
     voicebox.stop()
-    return "Stopped", 200
+    return jsonify({"message": "Stopped"}), 200
+
+@app.route("/output/<path:filename>")
+def download_file(filename):
+    return send_from_directory("output", filename)
 
 if __name__ == "__main__":
-    os.makedirs("output", exist_ok=True)
     app.run(host="0.0.0.0", port=5000)

@@ -2,429 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VoiceBox</title>
-  <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      background-color: #121212;
-      font-family: Arial, sans-serif;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .container {
-      width: 60vh;
-      height: 80vh;
-      aspect-ratio: 3 / 4;
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      max-width: 90vw;
-      max-height: 95vh;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        width: 90vw;
-        height: auto;
-        aspect-ratio: 9 / 16;
-        padding: 15px;
-      }
-    }
-
-    h2 {
-      text-align: center;
-      margin: 0 0 10px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      margin: 5px 0 10px;
-      padding: 12px 15px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      background: #333;
-      color: white;
-      box-shadow: inset 0 0 8px #000000aa;
-      box-sizing: border-box;
-      transition: background-color 0.2s ease;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      background-color: #444;
-      box-shadow: 0 0 8px #1976d2;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      -webkit-appearance: none;
-      height: 6px;
-      background: #333;
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-      margin: 5px 0 15px;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      background: #1976d2;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 2px black;
-      margin-top: -5px;
-    }
-
-    input[type="range"]::-moz-range-thumb {
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      background: #1976d2;
-      cursor: pointer;
-      border: none;
-    }
-
-    button,
-    .file-btn {
-      background-color: #1976d2;
-      color: white;
-      border: none;
-      padding: 12px;
-      margin: 8px 0;
-      cursor: pointer;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 500;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      user-select: none;
-      display: inline-block;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    button:hover,
-    .file-btn:hover {
-      background-color: #1565c0;
-    }
-
-    button:active,
-    .file-btn:active {
-      transform: scale(0.98);
-      background-color: #0d47a1;
-    }
-
-    .file-btn input[type="file"] {
-      display: none;
-    }
-
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    .status {
-      font-size: 14px;
-      margin-top: 5px;
-      color: #aaa;
-      min-height: 18px;
-    }
-
-    /* Custom Audio Player */
-    .audio-player {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    .audio-button {
-      background-color: #1976d2;
-      border: none;
-      color: white;
-      font-size: 20px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      transition: background-color 0.2s ease;
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-    }
-
-    .audio-button:hover {
-      background-color: #1565c0;
-    }
-
-    #audioProgress {
-      flex-grow: 1;
-      -webkit-appearance: none;
-      height: 6px;
-      background: #333;
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    #audioProgress::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      background: #1976d2;
-      cursor: pointer;
-      border: none;
-      margin-top: -5px;
-      box-shadow: 0 0 2px black;
-    }
-
-    #audioProgress::-moz-range-thumb {
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      background: #1976d2;
-      cursor: pointer;
-      border: none;
-    }
-
-    .audio-time {
-      min-width: 50px;
-      font-family: monospace;
-      font-size: 14px;
-      color: #aaa;
-      text-align: right;
-      user-select: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoiceBox TTS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container">
-    <h2>VoiceBox</h2>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="max-w-3xl mx-auto p-6 mt-10 bg-gray-800 rounded-2xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center">🎙️ VoiceBox TTS</h1>
 
-    <input type="text" id="text" placeholder="Type text..." />
+    <form id="tts-form" class="space-y-4">
+      <!-- Text input -->
+      <div>
+        <label class="block font-medium mb-1 text-white">Text</label>
+        <textarea name="text" id="text-input" rows="4"
+          class="w-full bg-gray-100 text-black border border-gray-300 rounded p-2"
+          placeholder="Type something here..."></textarea>
+      </div>
 
-    <label class="file-btn" tabindex="0">
-      TEXT FILE TO SPEAK (.txt)
-      <input type="file" id="file" accept=".txt" />
-    </label>
+      <!-- File input -->
+      <div>
+        <label class="block font-medium mb-1 text-white">Or upload a .txt file</label>
+        <input type="file" name="file" accept=".txt"
+          class="block w-full bg-gray-100 text-black border border-gray-300 rounded p-2" />
+      </div>
 
-    <label class="file-btn" tabindex="0">
-      SPEAKER VOICE CLIP (.wav)
-      <input type="file" id="audio" accept=".wav" />
-    </label>
+      <!-- Audio prompt -->
+      <div>
+        <label class="block font-medium mb-1 text-white">Reference audio (.wav)</label>
+        <input type="file" name="audio" accept=".wav" required
+          class="block w-full bg-gray-100 text-black border border-gray-300 rounded p-2" />
+      </div>
 
-    <div class="slider-label">
-      <label for="batch">Batch Size</label>
-      <span id="batchVal">30</span>
+      <!-- Sliders -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block font-medium mb-1 text-white">Batch Size</label>
+          <input type="number" name="batch_size" value="30" min="1"
+            class="w-full bg-gray-100 text-black border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-white">Exaggeration</label>
+          <input type="number" name="exaggeration" step="0.1" value="0.5" min="0" max="1"
+            class="w-full bg-gray-100 text-black border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-white">CFG Weight</label>
+          <input type="number" name="cfg_weight" step="0.1" value="0.5" min="0" max="1"
+            class="w-full bg-gray-100 text-black border border-gray-300 rounded p-2" />
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex items-center gap-4">
+        <button type="submit"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Generate
+        </button>
+        <button type="button" id="stop-button"
+          class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+          Stop
+        </button>
+      </div>
+    </form>
+
+    <!-- Status / Output -->
+    <div id="status" class="mt-6 text-sm text-gray-300"></div>
+    <div id="audio-container" class="mt-4 hidden">
+      <p class="font-medium text-white">Output:</p>
+      <audio id="audio-player" controls class="w-full mt-2 bg-gray-100 rounded"></audio>
     </div>
-    <input type="range" id="batch" min="1" max="300" value="30" />
-
-    <div class="slider-label">
-      <label for="exaggeration">Emotion</label>
-      <span id="exagVal">0.5</span>
-    </div>
-    <input type="range" id="exaggeration" min="0" max="1" step="0.01" value="0.5" />
-
-    <div class="slider-label">
-      <label for="cfg">Pacing</label>
-      <span id="cfgVal">0.5</span>
-    </div>
-    <input type="range" id="cfg" min="0" max="1" step="0.01" value="0.5" />
-
-    <button onclick="generate()">GENERATE</button>
-    <button onclick="stop()">STOP</button>
-
-    <div class="audio-player">
-      <button id="audioPlayBtn" class="audio-button" aria-label="Play/Pause">▶️</button>
-      <input type="range" id="audioProgress" min="0" max="100" value="0" step="1" />
-      <div class="audio-time" id="audioTime">00:00</div>
-    </div>
-
-    <div class="status" id="status"></div>
   </div>
 
   <script>
-    const $ = (id) => document.getElementById(id);
+    const form = document.getElementById('tts-form');
+    const status = document.getElementById('status');
+    const audioContainer = document.getElementById('audio-container');
+    const audioPlayer = document.getElementById('audio-player');
+    const stopButton = document.getElementById('stop-button');
 
-    const syncValue = (sliderId, displayId) => {
-      $(sliderId).oninput = () => {
-        $(displayId).textContent = $(sliderId).value;
-      };
-    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = "Generating...";
+      audioContainer.classList.add("hidden");
 
-    syncValue("batch", "batchVal");
-    syncValue("exaggeration", "exagVal");
-    syncValue("cfg", "cfgVal");
-
-    let audioBlob = null;
-    let audioContext, audioSource, audioBuffer;
-    let isPlaying = false;
-    let startTime = 0;
-    let pausedAt = 0;
-    let animationFrameId;
-
-    const playBtn = $("audioPlayBtn");
-    const progress = $("audioProgress");
-    const timeDisplay = $("audioTime");
-
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-      const s = Math.floor(seconds % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
-    }
-
-    function updateProgress() {
-      if (!audioBuffer) return;
-
-      const elapsed = audioContext.currentTime - startTime + pausedAt;
-      if (elapsed >= audioBuffer.duration) {
-        pauseAudio();
-        progress.value = 100;
-        timeDisplay.textContent = formatTime(audioBuffer.duration);
-        return;
-      }
-
-      progress.value = (elapsed / audioBuffer.duration) * 100;
-      timeDisplay.textContent = formatTime(elapsed);
-      animationFrameId = requestAnimationFrame(updateProgress);
-    }
-
-    function playAudio() {
-      if (!audioBuffer) return;
-
-      audioSource = audioContext.createBufferSource();
-      audioSource.buffer = audioBuffer;
-      audioSource.connect(audioContext.destination);
-
-      startTime = audioContext.currentTime;
-      audioSource.start(0, pausedAt);
-      isPlaying = true;
-      playBtn.textContent = "⏸️";
-
-      audioSource.onended = () => {
-        pauseAudio();
-        progress.value = 100;
-        timeDisplay.textContent = formatTime(audioBuffer.duration);
-      };
-
-      updateProgress();
-    }
-
-    function pauseAudio() {
-      if (audioSource) {
-        audioSource.stop();
-        audioSource.disconnect();
-        audioSource = null;
-      }
-      pausedAt += audioContext.currentTime - startTime;
-      isPlaying = false;
-      playBtn.textContent = "▶️";
-      cancelAnimationFrame(animationFrameId);
-    }
-
-    playBtn.onclick = () => {
-      if (!audioBuffer) return;
-      if (isPlaying) {
-        pauseAudio();
-      } else {
-        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        playAudio();
-      }
-    };
-
-    progress.oninput = () => {
-      if (!audioBuffer) return;
-      const seekTime = (progress.value / 100) * audioBuffer.duration;
-      pausedAt = seekTime;
-      timeDisplay.textContent = formatTime(seekTime);
-      if (isPlaying) {
-        pauseAudio();
-        playAudio();
-      }
-    };
-
-    async function generate() {
-      const form = new FormData();
-      const text = $("text").value.trim();
-      const file = $("file").files[0];
-      const audioFile = $("audio").files[0];
-
-      if (!text && !file) {
-        $("status").textContent = "Error: Provide text or a text file.";
-        return;
-      }
-      if (!audioFile) {
-        $("status").textContent = "Error: Provide a reference audio.";
-        return;
-      }
-
-      form.append("text", text);
-      if (file) form.append("file", file);
-      form.append("audio", audioFile);
-      form.append("batch_size", $("batch").value);
-      form.append("exaggeration", $("exaggeration").value);
-      form.append("cfg_weight", $("cfg").value);
-
-      $("status").textContent = "Generating...";
-      pausedAt = 0;
-      progress.value = 0;
-      timeDisplay.textContent = "00:00";
-      audioBlob = null;
-      audioBuffer = null;
-      if (audioContext) audioContext.close();
-      audioContext = null;
-      isPlaying = false;
-      playBtn.textContent = "▶️";
-
+      const formData = new FormData(form);
       try {
-        const res = await fetch("/generate", { method: "POST", body: form });
-        if (!res.ok) throw new Error(await res.text());
-        audioBlob = await res.blob();
+        const response = await fetch('/generate', {
+          method: 'POST',
+          body: formData
+        });
 
-        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (!response.ok) {
+          const errorText = await response.text();
+          status.textContent = `Error: ${errorText}`;
+          return;
+        }
 
-        const arrayBuffer = await audioBlob.arrayBuffer();
-        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
 
-        progress.value = 0;
-        timeDisplay.textContent = "00:00";
-
-        $("status").textContent = "Generation complete.";
+        audioPlayer.src = audioUrl;
+        audioContainer.classList.remove("hidden");
+        status.textContent = "Generation complete.";
       } catch (err) {
-        $("status").textContent = "Error: " + err.message;
+        status.textContent = `Error: ${err.message}`;
       }
-    }
+    });
 
-    async function stop() {
-      await fetch("/stop", { method: "POST" });
-      $("status").textContent = "Stopped.";
-      if (isPlaying) {
-        pauseAudio();
+    stopButton.addEventListener('click', async () => {
+      try {
+        await fetch('/stop', { method: 'POST' });
+        status.textContent = "Stopped by user.";
+      } catch (err) {
+        status.textContent = `Error stopping: ${err.message}`;
       }
-    }
+    });
   </script>
 </body>
 </html>
