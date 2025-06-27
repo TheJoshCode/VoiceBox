@@ -2,3 +2,4 @@
 /venv
 /backend/output
 /backend/output
+backend/__pycache__/voicebox_core.cpython-310.pyc
