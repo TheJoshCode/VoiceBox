@@ -2,74 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VoiceBox TTS</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 560px;
+      margin: auto;
+      background-color: #25253a;
+      padding: 3rem 2.5rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      text-align: left;
+    }
+    input, textarea {
+      background-color: #2e2e4a;
+      color: #e0e0e0;
+      border: 1px solid #444466;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-top: 0.25rem;
+      box-sizing: border-box;
+    }
+    input[type="file"] {
+      padding: 0.5rem;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 1rem 3rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button[type="submit"] {
+      background-color: #3a3a55;
+      color: #e0e0e0;
+    }
+    button[type="submit"]:hover {
+      background-color: #505075;
+      transform: translateY(-2px);
+    }
+    #stop-button {
+      background-color: #d93636;
+      color: white;
+    }
+    #stop-button:hover {
+      background-color: #b52d2d;
+      transform: translateY(-2px);
+    }
+    #advanced-settings {
+      margin-top: 2rem;
+      cursor: pointer;
+      user-select: none;
+      background-color: #2e2e4a;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+    #advanced-settings:hover {
+      background-color: #38385a;
+    }
+    #advanced-content {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #202034;
+      border-radius: 0.75rem;
+      display: none;
+      text-align: left;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #444466;
+      outline: none;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb,
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #6b48ff;
+      border: none;
+    }
+    #status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      min-height: 1.2rem;
+      color: #a0a0a0;
+    }
+    #audio-container {
+      margin-top: 2rem;
+    }
+    audio {
+      width: 100%;
+      border-radius: 0.5rem;
+      background-color: #2e2e4a;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-  <div class="max-w-3xl mx-auto p-6 mt-10 bg-gray-800 rounded-2xl shadow-lg">
-    <h1 class="text-3xl font-bold mb-6 text-center">🎙️ VoiceBox TTS</h1>
+<body>
+  <div class="container" role="main" aria-label="VoiceBox Text-to-Speech Generator">
+    <h1>🎙️ VoiceBox TTS</h1>
 
-    <form id="tts-form" class="space-y-4">
-      <!-- Text input -->
-      <div>
-        <label class="block font-medium mb-1 text-white">Text</label>
-        <textarea name="text" id="text-input" rows="4"
-          class="w-full bg-gray-600 text-white border border-gray-500 rounded p-2"
-          placeholder="Type something here..."></textarea>
+    <form id="tts-form">
+      <label for="text-input">Text</label>
+      <textarea id="text-input" name="text" rows="4" placeholder="Type your text here..."></textarea>
+
+      <label for="file-input">Or upload a .txt file</label>
+      <input type="file" id="file-input" name="file" accept=".txt" />
+
+      <label for="audio-input">Reference audio (.wav) <span style="color:#ef4444">*</span></label>
+      <input type="file" id="audio-input" name="audio" accept=".wav" required />
+
+      <div id="advanced-settings" tabindex="0" role="button" aria-expanded="false" aria-controls="advanced-content">
+        Advanced Settings ▼
       </div>
-
-      <!-- File input -->
-      <div>
-        <label class="block font-medium mb-1 text-white">Or upload a .txt file</label>
-        <input type="file" name="file" accept=".txt"
-          class="block w-full bg-gray-600 text-white border border-gray-500 rounded p-2" />
-      </div>
-
-      <!-- Audio prompt -->
-      <div>
-        <label class="block font-medium mb-1 text-white">Reference audio (.wav)</label>
-        <input type="file" name="audio" accept=".wav" required
-          class="block w-full bg-gray-600 text-white border border-gray-500 rounded p-2" />
-      </div>
-
-      <!-- Sliders -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div id="advanced-content">
         <div>
-          <label class="block font-medium mb-1 text-white">Batch Size</label>
-          <input type="number" name="batch_size" value="30" min="1"
-            class="w-full bg-gray-600 text-white border border-gray-500 rounded p-2" />
+          <label class="slider-label" for="batch-size">Batch Size: <span id="batch-size-val">30</span></label>
+          <input type="range" id="batch-size" name="batch_size" min="1" max="100" value="30" />
         </div>
         <div>
-          <label class="block font-medium mb-1 text-white">Exaggeration</label>
-          <input type="number" name="exaggeration" step="0.1" value="0.5" min="0" max="1"
-            class="w-full bg-gray-600 text-white border border-gray-500 rounded p-2" />
+          <label class="slider-label" for="exaggeration">Exaggeration: <span id="exaggeration-val">0.5</span></label>
+          <input type="range" id="exaggeration" name="exaggeration" min="0" max="1" step="0.1" value="0.5" />
         </div>
         <div>
-          <label class="block font-medium mb-1 text-white">CFG Weight</label>
-          <input type="number" name="cfg_weight" step="0.1" value="0.5" min="0" max="1"
-            class="w-full bg-gray-600 text-white border border-gray-500 rounded p-2" />
+          <label class="slider-label" for="cfg-weight">CFG Weight: <span id="cfg-weight-val">0.5</span></label>
+          <input type="range" id="cfg-weight" name="cfg_weight" min="0" max="1" step="0.1" value="0.5" />
         </div>
       </div>
 
-      <!-- Buttons -->
-      <div class="flex items-center gap-4">
-        <button type="submit"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-          Generate
-        </button>
-        <button type="button" id="stop-button"
-          class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
-          Stop
-        </button>
+      <div class="button-group">
+        <button type="submit">Generate</button>
+        <button type="button" id="stop-button">Stop</button>
       </div>
     </form>
 
-    <!-- Status / Output -->
-    <div id="status" class="mt-6 text-sm text-gray-300"></div>
-    <div id="audio-container" class="mt-4 hidden">
-      <p class="font-medium text-white">Output:</p>
-      <audio id="audio-player" controls class="w-full mt-2 bg-gray-600 rounded text-white"></audio>
+    <div id="status" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="audio-container" hidden>
+      <p style="font-weight:600; margin-bottom:0.5rem;">Output:</p>
+      <audio id="audio-player" controls></audio>
     </div>
   </div>
 
@@ -80,10 +193,39 @@
     const audioPlayer = document.getElementById('audio-player');
     const stopButton = document.getElementById('stop-button');
 
+    const advancedSettings = document.getElementById('advanced-settings');
+    const advancedContent = document.getElementById('advanced-content');
+
+    advancedSettings.addEventListener('click', () => {
+      const expanded = advancedSettings.getAttribute('aria-expanded') === 'true';
+      advancedSettings.setAttribute('aria-expanded', String(!expanded));
+      advancedContent.style.display = expanded ? 'none' : 'block';
+      advancedSettings.textContent = `Advanced Settings ${expanded ? '▼' : '▲'}`;
+    });
+
+    advancedSettings.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        advancedSettings.click();
+      }
+    });
+
+    const sliders = [
+      { slider: document.getElementById('batch-size'), label: document.getElementById('batch-size-val') },
+      { slider: document.getElementById('exaggeration'), label: document.getElementById('exaggeration-val') },
+      { slider: document.getElementById('cfg-weight'), label: document.getElementById('cfg-weight-val') },
+    ];
+
+    sliders.forEach(({ slider, label }) => {
+      slider.addEventListener('input', () => {
+        label.textContent = slider.value;
+      });
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = "Generating...";
-      audioContainer.classList.add("hidden");
+      audioContainer.hidden = true;
 
       const formData = new FormData(form);
       try {
@@ -102,7 +244,7 @@
         const audioUrl = URL.createObjectURL(blob);
 
         audioPlayer.src = audioUrl;
-        audioContainer.classList.remove("hidden");
+        audioContainer.hidden = false;
         status.textContent = "Generation complete.";
       } catch (err) {
         status.textContent = `Error: ${err.message}`;
@@ -112,7 +254,7 @@
     stopButton.addEventListener('click', async () => {
       try {
         await fetch('/stop', { method: 'POST' });
-        status.textContent = "Stopped by user.";
+        status.textContent = "Generation stopped.";
       } catch (err) {
         status.textContent = `Error stopping: ${err.message}`;
       }
