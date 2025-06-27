@@ -7,318 +7,110 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
-      color: #1f2937;
-      font-family: 'Inter', system-ui, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      @apply bg-gray-900 text-gray-100 font-sans min-h-screen m-0 p-4 flex items-center justify-center;
     }
-    .container {
-      max-width: 700px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .card {
-      background: white;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-    }
-    .header {
-      text-align: center;
-      padding: 1rem 0;
-    }
-    h1 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      color: #2563eb;
-      margin: 0;
-    }
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #4b5563;
-      margin-bottom: 0.25rem;
-    }
-    textarea, input[type="file"] {
-      background: #f9fafb;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      padding: 0.75rem;
-      font-size: 1rem;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border-color 0.2s ease;
-    }
-    textarea:focus, input[type="file"]:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-    .required {
-      color: #dc2626;
-      font-size: 0.75rem;
-      vertical-align: super;
-    }
-    .advanced-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem;
-      background: #f3f4f6;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #2563eb;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .advanced-toggle:hover {
-      background: #e5e7eb;
-    }
-    .advanced-content {
-      display: none;
-      padding: 1rem;
-      background: #f9fafb;
-      border-radius: 0.5rem;
-    }
-    .slider-group {
-      margin-bottom: 1rem;
-    }
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.875rem;
-      color: #4b5563;
-      margin-bottom: 0.25rem;
-    }
-    input[type="range"] {
-      width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: #d1d5db;
-      outline: none;
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-thumb,
-    input[type="range"]::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #2563eb;
-      border: none;
-    }
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      padding: 1rem 0;
-    }
-    button {
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    button.generate {
-      background: #2563eb;
-      color: white;
-    }
-    button.generate:hover {
-      background: #1e40af;
-      transform: translateY(-1px);
-    }
-    button.stop {
-      background: #dc2626;
-      color: white;
-    }
-    button.stop:hover {
-      background: #b91c1c;
-      transform: translateY(-1px);
-    }
-    .status {
-      text-align: center;
-      font-size: 0.875rem;
-      color: #6b7280;
-      min-height: 1.2rem;
-      padding: 0.5rem;
-    }
-    .audio-output {
-      display: none;
-      padding: 1rem;
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    }
-    audio {
-      width: 100%;
-      border-radius: 0.5rem;
-      background: #f9fafb;
-    }
-    @media (max-width: 640px) {
-      .container {
-        padding: 1rem;
-      }
-      h1 {
-        font-size: 1.875rem;
-      }
-      button {
-        padding: 0.75rem 1.5rem;
-      }
+    .slider-thumb::-webkit-slider-thumb,
+    .slider-thumb::-moz-range-thumb {
+      width: 10px; height: 10px; border-radius: 9999px; background: #2563eb; border: none;
     }
   </style>
 </head>
 <body>
-  <div class="container" role="main" aria-label="VoiceBox Text-to-Speech Generator">
-    <div class="header">
-      <h1>🎙️ VoiceBox TTS</h1>
-    </div>
-
-    <div class="card input-group">
-      <form id="tts-form">
+  <main class="w-80 h-[480px] md:w-96 bg-gray-800 rounded-xl p-4 shadow-lg flex flex-col gap-3 overflow-y-auto" role="main" aria-label="VoiceBox Text-to-Speech Generator">
+    <h1 class="text-center text-blue-400 font-semibold text-xl">🎙️ VoiceBox</h1>
+    <form id="tts-form" class="flex flex-col gap-3 text-sm">
+      <div>
+        <label for="text-input" class="block text-xs text-gray-300">Text</label>
+        <textarea id="text-input" name="text" placeholder="Type text..." class="w-full h-16 bg-gray-700 border border-gray-600 rounded p-2 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      <div>
+        <label for="file-input" class="block text-xs text-gray-300">Text File (.txt)</label>
+        <input type="file" id="file-input" name="file" accept=".txt" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs file:text-xs file:rounded" />
+      </div>
+      <div>
+        <label for="audio-input" class="block text-xs text-gray-300">Audio (.wav) <span class="text-red-500 align-super text-[10px]">*</span></label>
+        <input type="file" id="audio-input" name="audio" accept=".wav" required class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs" />
+      </div>
+      <button type="button" id="advanced-settings" class="bg-blue-600 hover:bg-blue-800 text-white rounded p-2 flex justify-between items-center" aria-expanded="false" aria-controls="advanced-content">
+        <span>Advanced</span><span>▼</span>
+      </button>
+      <div id="advanced-content" class="hidden bg-gray-700 rounded p-2 text-xs">
+        <div class="mb-2">
+          <div class="flex justify-between text-[10px] text-gray-300">Batch Size: <span data-label="batch-size">30</span></div>
+          <input type="range" id="batch-size" name="batch_size" min="1" max="100" value="30" class="w-full h-1 bg-gray-600 rounded slider-thumb" />
+        </div>
+        <div class="mb-2">
+          <div class="flex justify-between text-[10px] text-gray-300">Exaggeration: <span data-label="exaggeration">0.5</span></div>
+          <input type="range" id="exaggeration" name="exaggeration" min="0" max="1" step="0.1" value="0.5" class="w-full h-1 bg-gray-600 rounded slider-thumb" />
+        </div>
         <div>
-          <label for="text-input">Enter Text</label>
-          <textarea id="text-input" name="text" placeholder="Type your text here..."></textarea>
+          <div class="flex justify-between text-[10px] text-gray-300">CFG Weight: <span data-label="cfg-weight">0.5</span></div>
+          <input type="range" id="cfg-weight" name="cfg_weight" min="0" max="1" step="0.1" value="0.5" class="w-full h-1 bg-gray-600 rounded slider-thumb" />
         </div>
-
-        <div>
-          <label for="file-input">Or Upload Text File (.txt)</label>
-          <input type="file" id="file-input" name="file" accept=".txt" />
-        </div>
-
-        <div>
-          <label for="audio-input">Reference Audio (.wav) <span class="required">*</span></label>
-          <input type="file" id="audio-input" name="audio" accept=".wav" required />
-        </div>
-
-        <div class="advanced-toggle" id="advanced-settings" tabindex="0" role="button" aria-expanded="false" aria-controls="advanced-content">
-          <span>Advanced Settings</span>
-          <span>▼</span>
-        </div>
-        <div class="advanced-content" id="advanced-content">
-          <div class="slider-group">
-            <div class="slider-label">Batch Size: <span id="batch-size-val">30</span></div>
-            <input type="range" id="batch-size" name="batch_size" min="1" max="100" value="30" />
-          </div>
-          <div class="slider-group">
-            <div class="slider-label">Exaggeration: <span id="exaggeration-val">0.5</span></div>
-            <input type="range" id="exaggeration" name="exaggeration" min="0" max="1" step="0.1" value="0.5" />
-          </div>
-          <div class="slider-group">
-            <div class="slider-label">CFG Weight: <span id="cfg-weight-val">0.5</span></div>
-            <input type="range" id="cfg-weight" name="cfg_weight" min="0" max="1" step="0.1" value="0.5" />
-          </div>
-        </div>
-      </form>
+      </div>
+    </form>
+    <div class="flex gap-2">
+      <button type="submit" form="tts-form" class="flex-1 bg-blue-600 hover:bg-blue-800 text-white p-2 text-sm rounded">Generate</button>
+      <button type="button" id="stop-button" class="flex-1 bg-blue-600 hover:bg-blue-800 text-white p-2 text-sm rounded">Stop</button>
     </div>
-
-    <div class="button-group">
-      <button type="submit" form="tts-form" class="generate">Generate</button>
-      <button type="button" id="stop-button" class="stop">Stop</button>
+    <div id="status" class="text-center text-xs text-gray-400 h-4" aria-live="polite"></div>
+    <div id="audio-container" class="hidden">
+      <audio id="audio-player" controls class="w-full mt-2 rounded bg-gray-700"></audio>
     </div>
-
-    <div class="status" id="status" aria-live="polite" aria-atomic="true"></div>
-
-    <div class="audio-output" id="audio-container">
-      <p style="font-weight: 500; margin-bottom: 0.5rem;">Generated Audio</p>
-      <audio id="audio-player" controls></audio>
-    </div>
-  </div>
+  </main>
 
   <script>
-    const form = document.getElementById('tts-form');
-    const status = document.getElementById('status');
-    const audioContainer = document.getElementById('audio-container');
-    const audioPlayer = document.getElementById('audio-player');
-    const stopButton = document.getElementById('stop-button');
-    const advancedSettings = document.getElementById('advanced-settings');
-    const advancedContent = document.getElementById('advanced-content');
+    const $ = (id) => document.getElementById(id);
+    const status = $('status');
+    const audioPlayer = $('audio-player');
+    const audioContainer = $('audio-container');
 
-    advancedSettings.addEventListener('click', () => {
-      const expanded = advancedSettings.getAttribute('aria-expanded') === 'true';
-      advancedSettings.setAttribute('aria-expanded', String(!expanded));
-      advancedContent.style.display = expanded ? 'none' : 'block';
-      advancedSettings.lastChild.textContent = expanded ? '▼' : '▲';
+    // Advanced toggle
+    const toggleBtn = $('advanced-settings');
+    const advanced = $('advanced-content');
+
+    toggleBtn.onclick = () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      toggleBtn.setAttribute('aria-expanded', !expanded);
+      advanced.classList.toggle('hidden');
+      toggleBtn.lastChild.textContent = expanded ? '▼' : '▲';
+    };
+    toggleBtn.onkeydown = (e) => ['Enter', ' '].includes(e.key) && (e.preventDefault(), toggleBtn.click());
+
+    // Sliders update display
+    ['batch-size', 'exaggeration', 'cfg-weight'].forEach(id => {
+      const input = $(id);
+      const label = document.querySelector(`[data-label="${id}"]`);
+      input.oninput = () => (label.textContent = input.value);
     });
 
-    advancedSettings.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        advancedSettings.click();
-      }
-    });
-
-    const sliders = [
-      { slider: document.getElementById('batch-size'), label: document.getElementById('batch-size-val') },
-      { slider: document.getElementById('exaggeration'), label: document.getElementById('exaggeration-val') },
-      { slider: document.getElementById('cfg-weight'), label: document.getElementById('cfg-weight-val') },
-    ];
-
-    sliders.forEach(({ slider, label }) => {
-      slider.addEventListener('input', () => {
-        label.textContent = slider.value;
-      });
-    });
-
-    form.addEventListener('submit', async (e) => {
+    // Submit handler
+    $('tts-form').onsubmit = async (e) => {
       e.preventDefault();
-      status.textContent = "Generating...";
-      audioContainer.style.display = 'none';
+      status.textContent = 'Generating...';
+      audioContainer.classList.add('hidden');
 
-      const formData = new FormData(form);
+      const formData = new FormData(e.target);
       try {
-        const response = await fetch('/generate', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          status.textContent = `Error: ${errorText}`;
-          return;
-        }
-
-        const blob = await response.blob();
-        const audioUrl = URL.createObjectURL(blob);
-
-        audioPlayer.src = audioUrl;
-        audioContainer.style.display = 'block';
-        status.textContent = "Generation complete.";
+        const res = await fetch('/generate', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error(await res.text());
+        const blob = await res.blob();
+        audioPlayer.src = URL.createObjectURL(blob);
+        audioContainer.classList.remove('hidden');
+        status.textContent = 'Done.';
       } catch (err) {
         status.textContent = `Error: ${err.message}`;
       }
-    });
+    };
 
-    stopButton.addEventListener('click', async () => {
+    $('stop-button').onclick = async () => {
       try {
         await fetch('/stop', { method: 'POST' });
-        status.textContent = "Generation stopped.";
+        status.textContent = 'Stopped.';
       } catch (err) {
-        status.textContent = `Error stopping: ${err.message}`;
+        status.textContent = `Error: ${err.message}`;
       }
-    });
+    };
   </script>
 </body>
 </html>
