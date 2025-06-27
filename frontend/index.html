@@ -7,11 +7,49 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      @apply bg-gray-900 text-gray-100 font-sans min-h-screen m-0 p-4 flex items-center justify-center;
+      -webkit-app-region: drag; /* 👈 Allow dragging the whole UI */
+      border-radius: 1rem; /* 👈 Rounded corners */
+      overflow: hidden;
+      color: #ffffff !important;
     }
     .slider-thumb::-webkit-slider-thumb,
     .slider-thumb::-moz-range-thumb {
       width: 10px; height: 10px; border-radius: 9999px; background: #2563eb; border: none;
+    }
+    /* Prevent buttons and inputs from being draggable */
+    input, button, textarea, label, select {
+      -webkit-app-region: no-drag;
+    }
+    /* Hide scrollbar but keep it functional */
+    ::-webkit-scrollbar {
+      width: 8px;
+      background-color: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #4b5563; /* Gray-600 */
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #6b7280; /* Gray-500 */
+    }
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    /* Hide scrollbar in Firefox */
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 transparent; /* Gray-600 */
+    }
+    body::-moz-scrollbar {
+      width: 8px;
+      background-color: transparent;
+    }
+    body::-moz-scrollbar-thumb {
+      background-color: #4b5563; /* Gray-600 */
+      border-radius: 4px;
+    }
+    body::-moz-scrollbar-thumb:hover {
+      background-color: #6b7280; /* Gray-500 */
     }
   </style>
 </head>

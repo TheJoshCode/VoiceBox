@@ -13,6 +13,10 @@ os.makedirs("output", exist_ok=True)
 def index():
     return send_from_directory(app.static_folder, "index.html")
 
+@app.route("/test")
+def test():
+    return "OK", 200
+
 @app.route("/generate", methods=["POST"])
 def generate():
     try:
