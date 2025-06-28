@@ -5,3 +5,4 @@
 backend/__pycache__/voicebox_core.cpython-310.pyc
 /node_modules
 VoiceBoxBackend.exe
+/output
