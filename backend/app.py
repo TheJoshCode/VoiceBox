@@ -6,7 +6,6 @@ import os
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
 voicebox = VoiceBox()
 
-# Ensure output directory exists
 os.makedirs("output", exist_ok=True)
 
 @app.route("/")
@@ -30,12 +29,10 @@ def generate():
         if not audio_file:
             return jsonify({"error": "Provide a reference audio."}), 400
 
-        # Secure and save the audio prompt
         audio_filename = secure_filename(audio_file.filename or "audio_prompt.wav")
         audio_path = os.path.join("output", audio_filename)
         audio_file.save(audio_path)
 
-        # Process text file if provided
         if txt_file:
             text_filename = secure_filename(txt_file.filename or "input.txt")
             text_path = os.path.join("output", text_filename)
@@ -46,7 +43,6 @@ def generate():
         else:
             return jsonify({"error": "Provide either text or a text file."}), 400
 
-        # Handle different return types
         if isinstance(result_path, str) and os.path.exists(result_path):
             return send_file(result_path, mimetype="audio/wav", as_attachment=True)
         elif isinstance(result_path, str) and "stopped" in result_path.lower():

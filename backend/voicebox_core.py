@@ -4,7 +4,6 @@ import threading
 import torchaudio as ta
 from chatterbox.tts import ChatterboxTTS
 
-
 class VoiceBox:
     def __init__(self, output_dir="output"):
         self.model = ChatterboxTTS.from_pretrained(device="cuda")
@@ -13,14 +12,12 @@ class VoiceBox:
         os.makedirs(self.output_dir, exist_ok=True)
 
     def stop(self):
-        """Signal the model to stop generation."""
         self.stop_flag.set()
 
     def _save_audio(self, waveform, path):
         ta.save(path, waveform, self.model.sr)
 
     def generate_audio(self, text, audio_prompt_path, exaggeration=0.5, cfg_weight=0.5, output_path=None):
-        """Generate audio from a text prompt using a reference audio."""
         try:
             waveform = self.model.generate(
                 text=text,
@@ -56,7 +53,6 @@ class VoiceBox:
         return batches
 
     def process_text_file(self, file_path, audio_prompt_path, batch_size=30, exaggeration=0.5, cfg_weight=0.5):
-        """Process a text file into multiple audio files."""
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read().strip()
