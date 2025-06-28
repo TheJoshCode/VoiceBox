@@ -1,7 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-const http = require('http');
 
 let pyProc = null;
 let win = null;
@@ -25,6 +24,7 @@ function createWindow() {
 }
 
 function waitForServer(callback) {
+  const http = require('http');
   const options = {
     hostname: 'localhost',
     port: 5000,
@@ -46,11 +46,17 @@ function waitForServer(callback) {
 }
 
 function startPythonServer() {
-  const script = path.join(__dirname, 'start_backend.js');
-  pyProc = spawn('node', [script]);
+  // Get path to the backend executable inside the packaged app
+  const exePath = path.join(process.resourcesPath, 'VoiceBoxBackend.exe');
 
-  pyProc.stdout.on('data', (data) => console.log(`Backend: ${data}`));
-  pyProc.stderr.on('data', (data) => console.error(`Backend error: ${data}`));
+  pyProc = spawn(exePath);
+
+  pyProc.stdout.on('data', (data) => console.log(`[Backend] ${data}`));
+  pyProc.stderr.on('data', (data) => console.error(`[Backend ERROR] ${data}`));
+
+  pyProc.on('exit', (code) => {
+    console.log(`Backend exited with code ${code}`);
+  });
 }
 
 app.whenReady().then(() => {
