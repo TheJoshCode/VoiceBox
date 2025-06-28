@@ -25,10 +25,8 @@
     "build": "electron-builder",
     "dist": "electron-builder"
   },
-  "dependencies": {
-    "electron": "37.1.0"
-  },
   "devDependencies": {
-    "electron-builder": "26.0.17"
+    "electron-builder": "26.0.17",
+    "electron": "37.1.0"
   }
 }
