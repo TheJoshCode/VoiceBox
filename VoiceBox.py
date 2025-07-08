@@ -65,7 +65,7 @@ class VoiceBoxApp:
             chunks = [text[i:i+batch_size] for i in range(0, len(text), batch_size)]
             out_files = []
             for idx, chunk in enumerate(chunks, start=1):
-                wav = self.model.generate(chunk, speaker_wav=self.speaker_wav_path)
+                wav = self.model.generate(chunk, audio_prompt_path=self.speaker_wav_path)
                 file_name = os.path.join("chunks", f"voicebox_out_{idx}.wav")
                 ta.save(file_name, wav, self.model.sr)
                 out_files.append(file_name)
