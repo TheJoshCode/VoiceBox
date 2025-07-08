@@ -1,82 +1,96 @@
-import threading
-import tkinter as tk
-from tkinter import filedialog, messagebox
-import torchaudio as ta
 import os
+import torch
+import torchaudio as ta
+import threading
+
+from pywebio.input import textarea, input_group, file_upload, actions, slider
+from pywebio.output import put_text, put_html, put_success, put_file
+from pywebio.platform.tornado_http import start_server
 from chatterbox.tts import ChatterboxTTS
+import webview
 
-class VoiceBoxApp:
-    def __init__(self, root):
-        self.root = root
-        root.title("VoiceBox")
+def voicebox_app():
+    put_html("""
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f6f9;
+            padding: 30px;
+        }
+        .pywebio-container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.05);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .button {
+            background-color: #1e88e5;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #1565c0;
+        }
+    </style>
+    """)
 
-        self.speaker_wav_path = None
+    put_html("<h2>🎙️ VoiceBox TTS</h2>")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = ChatterboxTTS.from_pretrained(device=device)
 
-        self.text = tk.Text(root, wrap='word', height=10)
-        self.text.pack(expand=True, fill='both', padx=10, pady=10)
+    form = input_group("Generate Speech", [
+        textarea("Text to synthesize", name="text", rows=8, required=True, placeholder="Enter text..."),
+        slider("Batch size (characters)", name="batch_size", value=200, min_value=50, max_value=500, step=10),
+        file_upload("Speaker WAV (optional)", name="speaker", accept=".wav", required=False),
+        actions("", buttons=["Generate"], name="action")
+    ])
 
-        self.slider = tk.Scale(root, from_=1, to=500, orient='horizontal',
-                               label='Batch size (characters)',
-                               length=300)
-        self.slider.set(200)
-        self.slider.pack(padx=10, pady=5)
+    text = form["text"]
+    batch_size = form["batch_size"]
+    speaker_file = form["speaker"]
 
-        self.speaker_button = tk.Button(root, text="Select Speaker WAV", command=self.select_speaker_wav)
-        self.speaker_button.pack(pady=(10, 0))
+    os.makedirs("chunks", exist_ok=True)
+    chunks = [text[i:i + batch_size] for i in range(0, len(text), batch_size)]
+    out_files = []
 
-        self.speaker_label = tk.Label(root, text="No speaker selected", fg="gray")
-        self.speaker_label.pack(pady=(0, 10))
+    for idx, chunk in enumerate(chunks, start=1):
+        kwargs = {}
+        if speaker_file:
+            speaker_path = f"temp_speaker_{idx}.wav"
+            with open(speaker_path, "wb") as f:
+                f.write(speaker_file["content"])
+            kwargs["audio_prompt_path"] = speaker_path
 
-        self.gen_button = tk.Button(root, text="Generate", command=self.on_generate)
-        self.gen_button.pack(pady=10)
+        wav = model.generate(chunk, **kwargs)
+        out_path = f"chunks/voicebox_out_{idx}.wav"
+        ta.save(out_path, wav, model.sr)
+        out_files.append(out_path)
 
-        self.model = None
-        self.load_model()
+    put_success(f"✅ Generated {len(out_files)} files in 'chunks/'.")
 
-    def load_model(self):
-        try:
-            self.model = ChatterboxTTS.from_pretrained(device="cpu")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed loading model:\n{e}")
+    for path in out_files:
+        with open(path, "rb") as f:
+            put_file(os.path.basename(path), f.read())
 
-    def select_speaker_wav(self):
-        file_path = filedialog.askopenfilename(
-            title="Select Speaker WAV File",
-            filetypes=[("WAV files", "*.wav")]
-        )
-        if file_path:
-            self.speaker_wav_path = file_path
-            self.speaker_label.config(text=os.path.basename(file_path), fg="black")
-        else:
-            self.speaker_label.config(text="No speaker selected", fg="gray")
 
-    def on_generate(self):
-        text = self.text.get("1.0", tk.END).strip()
-        if not text:
-            messagebox.showwarning("Input needed", "Please enter some text.")
-            return
-        batch_size = self.slider.get()
-        self.gen_button.config(state='disabled')
-        threading.Thread(target=self.generate_batch, args=(text, batch_size), daemon=True).start()
+def start_voicebox_webview():
+    # Start PyWebIO server in a separate thread
+    threading.Thread(target=lambda: start_server(voicebox_app, port=8080, auto_open_webbrowser=False), daemon=True).start()
 
-    def generate_batch(self, text, batch_size):
-        try:
-            os.makedirs("chunks", exist_ok=True)
-            chunks = [text[i:i+batch_size] for i in range(0, len(text), batch_size)]
-            out_files = []
-            for idx, chunk in enumerate(chunks, start=1):
-                wav = self.model.generate(chunk, audio_prompt_path=self.speaker_wav_path)
-                file_name = os.path.join("chunks", f"voicebox_out_{idx}.wav")
-                ta.save(file_name, wav, self.model.sr)
-                out_files.append(file_name)
-            messagebox.showinfo("Done", f"Generated {len(out_files)} files in /chunks")
-        except Exception as e:
-            messagebox.showerror("Error", f"Generation failed:\n{e}")
-        finally:
-            self.gen_button.config(state='normal')
+    # Start native window
+    webview.create_window("VoiceBox TTS", "http://localhost:8080", width=800, height=700)
+    webview.start()
+
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = VoiceBoxApp(root)
-    root.geometry("500x500")
-    root.mainloop()
+    start_voicebox_webview()
