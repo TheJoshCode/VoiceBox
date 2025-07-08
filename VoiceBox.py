@@ -4,47 +4,44 @@ import torchaudio as ta
 import threading
 
 from pywebio.input import textarea, input_group, file_upload, actions, slider
-from pywebio.output import put_text, put_html, put_success, put_file
+from pywebio.output import put_html, put_success, put_file
 from pywebio.platform.tornado_http import start_server
 from chatterbox.tts import ChatterboxTTS
 import webview
 
+
 def voicebox_app():
     put_html("""
     <style>
-        body {
-            font-family: "Segoe UI", sans-serif;
+        html, body {
+            margin: 0;
+            padding: 0;
             background-color: #f4f6f9;
-            padding: 30px;
+            overflow: hidden;
         }
         .pywebio-container {
-            max-width: 700px;
-            margin: auto;
+            margin: 0 !important;
+            padding: 30px !important;
             background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
+            border-radius: 12px;
             box-shadow: 0 0 12px rgba(0,0,0,0.05);
+            font-family: "Segoe UI", sans-serif;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
         }
         h2 {
             text-align: center;
             color: #333;
+            margin-top: 0;
         }
-        .button {
-            background-color: #1e88e5;
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: #1565c0;
+        input, textarea, button {
+            font-size: 16px !important;
         }
     </style>
+    <h2>🎙️ VoiceBox TTS</h2>
     """)
 
-    put_html("<h2>🎙️ VoiceBox TTS</h2>")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = ChatterboxTTS.from_pretrained(device=device)
 
@@ -84,11 +81,17 @@ def voicebox_app():
 
 
 def start_voicebox_webview():
-    # Start PyWebIO server in a separate thread
     threading.Thread(target=lambda: start_server(voicebox_app, port=8080, auto_open_webbrowser=False), daemon=True).start()
 
-    # Start native window
-    webview.create_window("VoiceBox TTS", "http://localhost:8080", width=800, height=700)
+    window = webview.create_window(
+        "VoiceBox TTS",
+        "http://localhost:8080",
+        width=700,
+        height=650,
+        frameless=True,
+        easy_drag=False,
+        resizable=False
+    )
     webview.start()
 
 
