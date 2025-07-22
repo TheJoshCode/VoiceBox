@@ -9,3 +9,8 @@ VoiceBoxBackend.exe
 /dist
 ttsdatasetmaker.txt
 /chunks
+/dataset
+/runs
+/tts_output
+*.pth
+/cortana

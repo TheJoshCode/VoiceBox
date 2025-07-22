@@ -1,0 +1,19 @@
+{
+  "run_name": "voicebox_run",
+  "model": "glow_tts",
+  "batch_size": 16,
+  "eval_batch_size": 4,
+  "num_loader_workers": 2,
+  "run_eval": true,
+  "epochs": 50,
+  "text_cleaner": "english_cleaners",
+  "use_phonemes": false,
+  "datasets": [
+    {
+      "formatter": "ljspeech",
+      "meta_file_train": "dataset/metadata.csv",
+      "path": "dataset/"
+    }
+  ],
+  "output_path": "tts_output"
+}
